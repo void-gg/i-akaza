@@ -77,8 +77,8 @@ jobs:
           for app in "${DEPLOY_APPS_ARRAY[@]}"; do
             echo "Deploying $ECR_REGISTRY/$REPO_NAME-$app:$IMAGE_TAG image"
             IMAGE_URI=$ECR_REGISTRY/$REPO_NAME-$app:$IMAGE_TAG
-            echo 'docker pull $IMAGE_URI -t $REPO_NAME-$app:$IMAGE_TAG'
-            docker pull $IMAGE_URI -t $REPO_NAME-$app:$IMAGE_TAG
+            echo 'docker pull $IMAGE_URI && docker tag $IMAGE_URI $REPO_NAME-$app:$IMAGE_TAG'
+            docker pull $IMAGE_URI && docker tag $IMAGE_URI $REPO_NAME-$app:$IMAGE_TAG
             docker images
             if docker image inspect $ECR_REGISTRY/$REPO_NAME-$app >/dev/null 2>&1; then echo "Exists"; else echo "Does not exist"; fi
             if docker image inspect $ECR_REGISTRY/$REPO_NAME-$app:$IMAGE_TAG >/dev/null 2>&1; then echo "Exists"; else echo "Does not exist"; fi
