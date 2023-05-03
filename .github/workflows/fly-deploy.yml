@@ -78,10 +78,13 @@ jobs:
             echo "Deploying $ECR_REGISTRY/$REPO_NAME-$app:$IMAGE_TAG image"
             IMAGE_URI=$ECR_REGISTRY/$REPO_NAME-$app:$IMAGE_TAG
             docker pull $IMAGE_URI && docker tag $IMAGE_URI registry.fly.io/$REPO_NAME-$app-$NODE_ENV:$IMAGE_TAG
-            docker rmi $IMAGE_URI
-            docker images
             flyctl auth docker
+
+            echo "docker push registry.fly.io/$REPO_NAME-$app-$NODE_ENV:$IMAGE_TAG"
             docker push registry.fly.io/$REPO_NAME-$app-$NODE_ENV:$IMAGE_TAG
+
+            echo -e "\n\n\n"
+            flyctl deploy --image registry.fly.io/$REPO_NAME-$app-$NODE_ENV:$IMAGE_TAG -a $REPO_NAME-$app-$NODE_ENV --config apps/$app/fly.dev.toml
             echo -e "\n\n\n"
             done
       # - name: Export Outputs
