@@ -79,6 +79,8 @@ jobs:
             echo "Deploying $ECR_REGISTRY/$REPO_NAME-$app:$IMAGE_TAG image"
             IMAGE_URI=$ECR_REGISTRY/$REPO_NAME-$app:$IMAGE_TAG
             docker pull $IMAGE_URI
+            docker images
+            docker tag $REPO_NAME-$app:$IMAGE_TAG registry.fly.io/$REPO_NAME-$app-$NODE_ENV:$IMAGE_TAG
       #      echo "Here"
       #      echo "flyctl deploy --image $IMAGE_URI --app $REPO_NAME-$app-$NODE_ENV --remote-only"
       #      flyctl deploy --image $IMAGE_URI --app $REPO_NAME-$app-$NODE_ENV --remote-only
