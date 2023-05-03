@@ -11,13 +11,13 @@ on:
     outputs:
       env-json-output:
         description: "The first output string"
-        value: ${{ toJSON(jobs.deploy.outputs.all-outputs) }}
+        value: ${{ toJSON(jobs.fly-deploy.outputs.all-outputs) }}
 
 env:
   ${{ fromJSON(inputs.env_vars) }}
 
 jobs:
-  deploy:
+  fly-deploy:
     name: deploy
     runs-on: ubuntu-latest
     outputs:
