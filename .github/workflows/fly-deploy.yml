@@ -81,9 +81,6 @@ jobs:
             docker pull $IMAGE_URI
             docker images
             docker tag $REPO_NAME-$app:$IMAGE_TAG registry.fly.io/$REPO_NAME-$app-$NODE_ENV:$IMAGE_TAG
-      #      echo "Here"
-      #      echo "flyctl deploy --image $IMAGE_URI --app $REPO_NAME-$app-$NODE_ENV --remote-only"
-      #      flyctl deploy --image $IMAGE_URI --app $REPO_NAME-$app-$NODE_ENV --remote-only
           done
       # - name: Export Outputs
       #   id: export-outputs
