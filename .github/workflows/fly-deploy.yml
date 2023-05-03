@@ -1,0 +1,93 @@
+name: Nest Mono Repo Build
+
+on:
+  workflow_call:
+    inputs:
+      env_vars:
+        description: 'Environment Variables'
+        required: true
+        default: '{}'
+        type: string
+    outputs:
+      env-json-output:
+        description: "The first output string"
+        value: ${{ toJSON(jobs.deploy.outputs.all-outputs) }}
+
+env:
+  ${{ fromJSON(inputs.env_vars) }}
+  FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+jobs:
+  deploy:
+    name: build
+    needs: [set-up]
+    runs-on: ubuntu-latest
+    outputs:
+      all-outputs: ${{ toJSON(steps.export-outputs.outputs) }}
+    if: |
+      (
+        github.event_name == 'push' &&
+        (
+          github.ref == 'refs/heads/prod' ||
+          github.ref == 'refs/heads/stage' ||
+          github.ref == 'refs/heads/qa' ||
+          github.ref == 'refs/heads/dev'
+        )
+      ) ||
+      (
+        github.event_name == 'pull_request' &&
+        (
+          github.event.pull_request.head.ref == 'prod' ||
+          github.event.pull_request.head.ref == 'stage' ||
+          github.event.pull_request.head.ref == 'qa' ||
+          github.event.pull_request.head.ref == 'dev'
+        ) &&
+        github.event.pull_request.merged == true
+      )
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      - name: Check AWS_ACCESS_KEY_ID secret
+        run: |
+          echo ${{ secrets.AWS_ACCESS_KEY_ID }}
+          echo ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          echo $FLY_API_TOKEN
+          echo ${{ inputs.env_vars }}
+      # - name: Configure AWS credentials
+      #   uses: aws-actions/configure-aws-credentials@v1
+      #   with:
+      #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #     aws-region: ${{env.AWS_REGION}}
+      # - name: Login to Amazon ECR
+      #   id: login-ecr
+      #   uses: aws-actions/amazon-ecr-login@v1
+      # - name: Check ECR Connection
+      #   run: |
+      #     set -e
+      #     aws ecr describe-repositories
+      # - name: Build and Push the Image to Amazon ECR
+      #   id: build-image
+      #   env:
+      #     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      #     IMAGE_TAG: 'latest'
+      #   run: |
+      #     IFS=' ' read -ra DEPLOY_APPS_ARRAY <<< "$DEPLOY_APPS"
+      #     echo "Build apps:"
+      #     for app in "${DEPLOY_APPS_ARRAY[@]}"; do
+      #       echo "Building $ECR_REGISTRY/$REPO_NAME-$app:$IMAGE_TAG image"
+      #       docker build -f apps/$app/Dockerfile -t $ECR_REGISTRY/$REPO_NAME-$app:$IMAGE_TAG .
+      #       aws ecr describe-repositories --repository-names $REPO_NAME-$app || \
+      #       aws ecr create-repository --repository-name $REPO_NAME-$app --image-scanning-configuration scanOnPush=true
+      #       aws ecr batch-delete-image --repository-name $REPO_NAME-$app --image-ids imageTag=latest
+      #       echo "Pushing $ECR_REGISTRY/$REPO_NAME-$app:$IMAGE_TAG"
+      #       docker push $ECR_REGISTRY/$REPO_NAME-$app:$IMAGE_TAG
+      #     done
+      # - name: Export Outputs
+      #   id: export-outputs
+      #   run: |
+      #     echo CHANGED_FILES=$CHANGED_FILES >> $GITHUB_OUTPUT
+      #     echo CHANGE_ALL=$CHANGE_ALL >> $GITHUB_OUTPUT
+      #     echo DEPLOY_APPS=$DEPLOY_APPS >> $GITHUB_OUTPUT
+      #     echo CHANGED_FILES=$CHANGED_FILES >> $GITHUB_OUTPUT
+      #     echo CHANGE_ALL=$CHANGE_ALL >> $GITHUB_OUTPUT
