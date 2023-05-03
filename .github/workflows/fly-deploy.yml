@@ -78,7 +78,7 @@ jobs:
           for app in "${DEPLOY_APPS_ARRAY[@]}"; do
             echo "Deploying $ECR_REGISTRY/$REPO_NAME-$app:$IMAGE_TAG image"
             IMAGE_URI=$ECR_REGISTRY/$REPO_NAME-$app:$IMAGE_TAG
-            flyctl deploy --image $IMAGE_URI --$REPO_NAME-$app-$NODE_ENV --remote-only
+            flyctl deploy --image $IMAGE_URI --app $REPO_NAME-$app-$NODE_ENV --remote-only
           done
       # - name: Export Outputs
       #   id: export-outputs
