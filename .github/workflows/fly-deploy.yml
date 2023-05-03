@@ -81,7 +81,7 @@ jobs:
             IMAGE_URI=$ECR_REGISTRY/$REPO_NAME-$app:$IMAGE_TAG
             echo "Here"
             echo "flyctl deploy --image $IMAGE_URI --app $REPO_NAME-$app-$NODE_ENV --remote-only"
-            flyctl deploy --image $IMAGE_URI --app $REPO_NAME-$app-$NODE_ENV --remote-only
+            flyctl deploy --image $IMAGE_URI --app $REPO_NAME-$app-$NODE_ENV --remote-only --debug
           done
       # - name: Export Outputs
       #   id: export-outputs
