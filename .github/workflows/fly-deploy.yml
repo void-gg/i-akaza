@@ -65,6 +65,8 @@ jobs:
         run: |
           set -e
           aws ecr describe-repositories
+      - name: Set up flyctl
+        uses: superfly/flyctl-actions/setup-flyctl@master
       - name: Fetch Image And Deploy
         id: build-image
         env:
@@ -76,26 +78,8 @@ jobs:
           for app in "${DEPLOY_APPS_ARRAY[@]}"; do
             echo "Deploying $ECR_REGISTRY/$REPO_NAME-$app:$IMAGE_TAG image"
             IMAGE_URI=$ECR_REGISTRY/$REPO_NAME-$app:$IMAGE_TAG
-            echo $IMAGE_URI
+            flyctl deploy --image $IMAGE_URI --$REPO_NAME-$app-$NODE_ENV --remote-only
           done
-      
-      # - name: Build and Push the Image to Amazon ECR
-      #   id: build-image
-      #   env:
-      #     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-      #     IMAGE_TAG: 'latest'
-      #   run: |
-      #     IFS=' ' read -ra DEPLOY_APPS_ARRAY <<< "$DEPLOY_APPS"
-      #     echo "Build apps:"
-      #     for app in "${DEPLOY_APPS_ARRAY[@]}"; do
-      #       echo "Building $ECR_REGISTRY/$REPO_NAME-$app:$IMAGE_TAG image"
-      #       docker build -f apps/$app/Dockerfile -t $ECR_REGISTRY/$REPO_NAME-$app:$IMAGE_TAG .
-      #       aws ecr describe-repositories --repository-names $REPO_NAME-$app || \
-      #       aws ecr create-repository --repository-name $REPO_NAME-$app --image-scanning-configuration scanOnPush=true
-      #       aws ecr batch-delete-image --repository-name $REPO_NAME-$app --image-ids imageTag=latest
-      #       echo "Pushing $ECR_REGISTRY/$REPO_NAME-$app:$IMAGE_TAG"
-      #       docker push $ECR_REGISTRY/$REPO_NAME-$app:$IMAGE_TAG
-      #     done
       # - name: Export Outputs
       #   id: export-outputs
       #   run: |
