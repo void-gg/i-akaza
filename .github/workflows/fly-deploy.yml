@@ -80,7 +80,10 @@ jobs:
             IMAGE_URI=$ECR_REGISTRY/$REPO_NAME-$app:$IMAGE_TAG
             docker pull $IMAGE_URI
             docker images
-            docker tag $REPO_NAME-$app:$IMAGE_TAG registry.fly.io/$REPO_NAME-$app-$NODE_ENV:$IMAGE_TAG
+            if docker image inspect $ECR_REGISTRY/$REPO_NAME-$app >/dev/null 2>&1; then echo "Exists"; else echo "Does not exist"; fi
+            if docker image inspect $ECR_REGISTRY/$REPO_NAME-$app:$IMAGE_TAG >/dev/null 2>&1; then echo "Exists"; else echo "Does not exist"; fi
+            if docker image inspect $REPO_NAME-$app >/dev/null 2>&1; then echo "Exists"; else echo "Does not exist"; fi
+            if docker image inspect $REPO_NAME-$app:$IMAGE_TAG >/dev/null 2>&1; then echo "Exists"; else echo "Does not exist"; fi
           done
       # - name: Export Outputs
       #   id: export-outputs
