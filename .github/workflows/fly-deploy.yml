@@ -67,8 +67,6 @@ jobs:
           aws ecr describe-repositories
       - name: Set up flyctl
         uses: superfly/flyctl-actions/setup-flyctl@master
-      - name: Login to Fly.io
-        run: flyctl auth login -t $FLY_API_TOKEN
       - name: Fetch Image And Deploy
         id: build-image
         env:
