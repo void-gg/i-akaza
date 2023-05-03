@@ -14,8 +14,8 @@ on:
         value: ${{ toJSON(jobs.deploy.outputs.all-outputs) }}
 
 env:
-  ${{ fromJSON(inputs.env_vars) }}
   FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+  ${{ fromJSON(inputs.env_vars) }}
 
 jobs:
   deploy:
