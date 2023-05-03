@@ -79,8 +79,9 @@ jobs:
             IMAGE_URI=$ECR_REGISTRY/$REPO_NAME-$app:$IMAGE_TAG
             echo 'docker pull $IMAGE_URI && docker tag $IMAGE_URI $REPO_NAME-$app:$IMAGE_TAG'
             flyctl auth docker
-            flyctl auth token
-            echo "\n\n---------------------------------"
+            docker pull $IMAGE_URI && docker tag $IMAGE_URI registry.fly.io/$IMAGE_URI
+            docker push registry.fly.io/$IMAGE_URI
+            echo -e "\n\n\n"
             done
       # - name: Export Outputs
       #   id: export-outputs
