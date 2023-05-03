@@ -76,6 +76,7 @@ jobs:
           IFS=' ' read -ra DEPLOY_APPS_ARRAY <<< "$DEPLOY_APPS"
           echo "Build apps:"
           for app in "${DEPLOY_APPS_ARRAY[@]}"; do
+            aws ecr describe-repositories
             echo "Deploying $ECR_REGISTRY/$REPO_NAME-$app:$IMAGE_TAG image"
             IMAGE_URI=$ECR_REGISTRY/$REPO_NAME-$app:$IMAGE_TAG
             echo "Here"
