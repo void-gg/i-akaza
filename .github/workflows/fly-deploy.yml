@@ -18,8 +18,7 @@ env:
 
 jobs:
   deploy:
-    name: build
-    needs: [set-up]
+    name: deploy
     runs-on: ubuntu-latest
     outputs:
       all-outputs: ${{ toJSON(steps.export-outputs.outputs) }}
@@ -43,6 +42,8 @@ jobs:
         ) &&
         github.event.pull_request.merged == true
       )
+    env:
+      FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
